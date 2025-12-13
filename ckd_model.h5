@@ -1,0 +1,23 @@
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+
+def load_ckd_model(file_path='ckd_model.h5'):
+    """
+    Loads the trained Keras model from an HDF5 (.h5) file.
+    """
+    try:
+        # Load the model, including the architecture, weights, and optimizer state
+        model = load_model(file_path)
+        print(f"✅ CKD Model loaded successfully from '{file_path}'")
+        return model
+    except FileNotFoundError:
+        print(f"❌ ERROR: Model file '{file_path}' not found. Check the file path.")
+        return None
+    except Exception as e:
+        print(f"❌ ERROR loading model: {e}")
+        return None
+
+# Example usage:
+# ckd_model = load_ckd_model()
+# if ckd_model:
+#     ckd_model.summary() # Optional: displays the model structure
