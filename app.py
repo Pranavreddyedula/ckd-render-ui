@@ -1,32 +1,29 @@
-from flask import Flask, request, jsonify
-import pickle
+from flask import Flask, render_template, request
 import numpy as np
+import pickle
 import os
 
 app = Flask(__name__)
 
-# Load scaler safely
+model = pickle.load(open("model.pkl", "rb"))
 scaler = pickle.load(open("scaler.pkl", "rb"))
 
 @app.route("/")
 def home():
-    return "CKD API is running"
+    return render_template("result.html")
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    data = request.json["features"]
-    data = np.array(data).reshape(1, -1)
-    data = scaler.transform(data)
+    features = [float(x) for x in request.form.values()]
+    final_features = np.array(features).reshape(1, -1)
+    final_features = scaler.transform(final_features)
 
-    # Dummy prediction (since model is missing)
-    prediction = 1 if np.mean(data) > 0 else 0
+    prediction = model.predict(final_features)[0]
 
-    return jsonify({
-        "prediction": int(prediction),
-        "message": "CKD Detected" if prediction == 1 else "No CKD"
-    })
+    result = "Chronic Kidney Disease Detected" if prediction == 1 else "No Chronic Kidney Disease"
+
+    return render_template("result.html", prediction_text=result)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
-
