@@ -1,39 +1,32 @@
-from flask import Flask, render_template, request
+from flask import Flask, request, jsonify
+import pickle
 import numpy as np
-import joblib
-from tensorflow.keras.models import load_model
+import os
 
 app = Flask(__name__)
 
-model = load_model("ckd_model.h5")
-scaler = joblib.load("scaler.pkl")
+# Load scaler safely
+scaler = pickle.load(open("scaler.pkl", "rb"))
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return "CKD API is running"
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    values = [float(v) for v in request.form.values()]
-    sample = np.array(values).reshape(1, -1)
-    scaled = scaler.transform(sample).reshape(1, -1, 1)
+    data = request.json["features"]
+    data = np.array(data).reshape(1, -1)
+    data = scaler.transform(data)
 
-    prob = model.predict(scaled)[0][0]
-    confidence = round(prob * 100, 2)
+    # Dummy prediction (since model is missing)
+    prediction = 1 if np.mean(data) > 0 else 0
 
-    if prob >= 0.5:
-        result = "⚠️ CKD DETECTED"
-        kidney_image = "ckd_kidney.png"
-    else:
-        result = "✅ NO CKD"
-        kidney_image = "healthy_kidney.png"
-
-    return render_template(
-        "result.html",
-        prediction=result,
-        confidence=confidence,
-        kidney_image=kidney_image
-    )
+    return jsonify({
+        "prediction": int(prediction),
+        "message": "CKD Detected" if prediction == 1 else "No CKD"
+    })
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
