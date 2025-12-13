@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container result-box">
+<h2>Prediction Result</h2>
+
+<p><b>Status:</b> {{ prediction }}</p>
+<p><b>Confidence:</b> {{ confidence }}%</p>
+
+<img src="{{ url_for('static', filename=kidney_image) }}" width="280">
+
+<br><br>
+<a href="/">⬅ Back</a>
+</div>
+
+</body>
+</html>
