@@ -1,44 +1,67 @@
 from flask import Flask, render_template, request
 import numpy as np
 import pickle
-import os
+import tensorflow as tf
 
 app = Flask(__name__)
 
-# Load trained model and scaler
-model = pickle.load(open("model.pkl", "rb"))
-scaler = pickle.load(open("scaler.pkl", "rb"))
+# Load model & scaler
+model = tf.keras.models.load_model("ckd_model.h5")
+with open("scaler.pkl", "rb") as f:
+    scaler = pickle.load(f)
 
-@app.route("/")
+FEATURES = [
+    'age','bp','sg','al','su','rbc','pc','pcc','ba','bgr',
+    'bu','sc','sod','pot','hemo','pcv','wc','rc',
+    'htn','dm','cad','appet','pe','ane'
+]
+
+CAUSES = [
+    "Diabetes Mellitus",
+    "High Blood Pressure",
+    "Heart Disease",
+    "Smoking",
+    "Obesity",
+    "Family History of CKD"
+]
+
+STAGES = {
+    0: "Healthy Kidney",
+    1: "Stage 1–2 CKD (Mild)",
+    2: "Stage 3 CKD (Moderate)",
+    3: "Stage 4–5 CKD (Severe)"
+}
+
+@app.route("/", methods=["GET"])
 def home():
-    return render_template("index.html")
+    return render_template("index.html", features=FEATURES)
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    # Read input features safely in correct order
-    features = [float(x) for x in request.form.getlist("features[]")]
+    values = [float(request.form[f]) for f in FEATURES]
+    data = np.array(values).reshape(1, -1)
+    data_scaled = scaler.transform(data)
 
-    final_features = np.array(features).reshape(1, -1)
-    final_features = scaler.transform(final_features)
+    prob = model.predict(data_scaled)[0][0]
+    confidence = round(prob * 100, 2)
 
-    prediction = model.predict(final_features)[0]
-    probability = model.predict_proba(final_features)[0]
-    confidence = round(max(probability) * 100, 2)
-
-    if prediction == 1:
-        status = "Chronic Kidney Disease Detected"
-        kidney_image = "ckd.png"
+    if prob < 0.5:
+        result = "✅ NO CKD"
+        image = "healthy_kidney.png"
+        stage = STAGES[0]
     else:
-        status = "No Chronic Kidney Disease"
-        kidney_image = "healthy.png"
+        result = "⚠️ CKD DETECTED"
+        image = "ckd_kidney.png"
+        stage = STAGES[min(3, int(prob * 4))]
 
     return render_template(
         "result.html",
-        prediction=status,
+        result=result,
         confidence=confidence,
-        kidney_image=kidney_image
+        image=image,
+        stage=stage,
+        causes=CAUSES
     )
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
