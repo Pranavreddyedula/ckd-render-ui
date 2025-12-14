@@ -2,32 +2,43 @@
 <html>
 <head>
     <title>CKD Detection</title>
-    <style>
-        body { font-family: Arial; background:#f4f6f8; }
-        .box { width: 700px; margin: auto; background: white; padding: 20px; }
-        input { width: 100%; padding: 6px; margin: 4px 0; }
-        button { padding: 10px; background: #007bff; color: white; border: none; }
-        h2 { text-align: center; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<div class="box">
-    <h2>🩺 Chronic Kidney Disease Detection</h2>
+
+<div class="container">
+    <h1>🩺 Chronic Kidney Disease Detection</h1>
+    <p>0 = No / Abnormal | 1 = Yes / Normal</p>
+
     <form method="POST">
-        {% for field in [
+        {% for f in [
         'age','bp','sg','al','su','rbc','pc','pcc','ba','bgr','bu','sc',
         'sod','pot','hemo','pcv','wc','rc','htn','dm','cad','appet','pe','ane'
         ] %}
-            <label>{{ field }}</label>
-            <input type="number" step="any" name="{{ field }}" required>
+            <label>{{ f }}</label>
+            <input type="number" step="any" name="{{ f }}" required>
         {% endfor %}
-        <br><br>
+
         <button type="submit">Predict</button>
     </form>
 
     {% if prediction %}
-        <h3 style="text-align:center;">{{ prediction }}</h3>
+        <div class="result">
+            <h2>{{ prediction }}</h2>
+
+            {% if image %}
+                <img src="{{ url_for('static', filename=image) }}"
+                     alt="Kidney Image"
+                     class="kidney-img">
+            {% endif %}
+
+            <h3>Model Accuracy</h3>
+            <img src="{{ url_for('static', filename='accuracy.png') }}"
+                 alt="Accuracy Graph"
+                 class="graph-img">
+        </div>
     {% endif %}
 </div>
+
 </body>
 </html>
