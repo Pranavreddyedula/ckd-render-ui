@@ -1,25 +1,23 @@
 body {
-    background: #f4f9ff;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
+    background: #f2f7fb;
 }
 
 .container {
-    width: 600px;
+    width: 420px;
     margin: auto;
     background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px #ccc;
+    padding: 20px;
+    border-radius: 8px;
 }
 
 h1 {
     text-align: center;
-    color: #0056b3;
 }
 
 label {
     display: block;
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 input {
@@ -29,22 +27,26 @@ input {
 
 button {
     margin-top: 15px;
-    padding: 10px;
     width: 100%;
+    padding: 10px;
     background: #007bff;
     color: white;
     border: none;
     font-size: 16px;
+    cursor: pointer;
+}
+
+.result {
+    text-align: center;
+    margin-top: 20px;
 }
 
 .kidney-img {
-    width: 250px;
-    display: block;
-    margin: 15px auto;
+    width: 280px;
+    margin-top: 10px;
 }
 
 .graph-img {
-    width: 95%;
-    margin: 10px auto;
-    display: block;
+    width: 380px;
+    margin-top: 10px;
 }
