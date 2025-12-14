@@ -69,3 +69,30 @@ joblib.dump(scaler, "scaler.pkl")
 joblib.dump(imputer, "imputer.pkl")
 
 print("✅ CKD model trained with EXACTLY 24 features")
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+
+# Split data for evaluation
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model.fit(X_train, y_train)
+
+train_acc = accuracy_score(y_train, model.predict(X_train))
+test_acc = accuracy_score(y_test, model.predict(X_test))
+
+# Plot accuracy graph
+plt.figure()
+plt.bar(["Training Accuracy", "Testing Accuracy"],
+        [train_acc, test_acc])
+plt.ylim(0, 1)
+plt.ylabel("Accuracy")
+plt.title("CKD Model Accuracy")
+plt.savefig("static/accuracy.png")
+plt.close()
+
+print("📊 Accuracy graph saved as static/accuracy.png")
+
+
