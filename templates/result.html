@@ -2,21 +2,26 @@
 <html>
 <head>
     <title>Result</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+<div class="container">
+    <h1>Prediction Result</h1>
 
-<div class="container result-box">
-<h2>Prediction Result</h2>
+    <h2>{{ result }}</h2>
+    <p><b>Prediction Confidence:</b> {{ confidence }}%</p>
+    <p><b>Stage:</b> {{ stage }}</p>
 
-<p><b>Status:</b> {{ prediction }}</p>
-<p><b>Confidence:</b> {{ confidence }}%</p>
+    <img src="/static/{{ image }}" class="kidney-img">
 
-<img src="{{ url_for('static', filename=kidney_image) }}" width="280">
+    <h3>Possible Causes</h3>
+    <ul>
+        {% for c in causes %}
+            <li>{{ c }}</li>
+        {% endfor %}
+    </ul>
 
-<br><br>
-<a href="/">⬅ Back</a>
+    <a href="/">🔁 Try Again</a>
 </div>
-
 </body>
 </html>
