@@ -9,7 +9,7 @@
     <h1>Prediction Result</h1>
 
     <h2>{{ result }}</h2>
-    <p><b>Prediction Confidence:</b> {{ confidence }}%</p>
+    <p><b>Confidence:</b> {{ confidence }}%</p>
     <p><b>Stage:</b> {{ stage }}</p>
 
     <img src="/static/{{ image }}" class="kidney-img">
@@ -20,6 +20,10 @@
             <li>{{ c }}</li>
         {% endfor %}
     </ul>
+
+    <h3>Model Performance</h3>
+    <img src="/static/training_graph.png" class="graph-img">
+    <img src="/static/confusion_matrix.png" class="graph-img">
 
     <a href="/">🔁 Try Again</a>
 </div>
