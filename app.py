@@ -5,7 +5,7 @@ import tensorflow as tf
 
 app = Flask(__name__)
 
-# Load model & scaler
+# Load trained model & scaler
 model = tf.keras.models.load_model("ckd_model.h5")
 with open("scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
@@ -32,7 +32,7 @@ STAGES = {
     3: "Stage 4–5 CKD (Severe)"
 }
 
-@app.route("/", methods=["GET"])
+@app.route("/")
 def home():
     return render_template("index.html", features=FEATURES)
 
@@ -64,4 +64,4 @@ def predict():
     )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
