@@ -5,10 +5,15 @@ import os
 
 app = Flask(__name__)
 
-# Load trained components
-model = joblib.load("ckd_model.pkl")
-scaler = joblib.load("scaler.pkl")
-imputer = joblib.load("imputer.pkl")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Safe model loading
+try:
+    model = joblib.load(os.path.join(BASE_DIR, "ckd_model.pkl"))
+    scaler = joblib.load(os.path.join(BASE_DIR, "scaler.pkl"))
+    imputer = joblib.load(os.path.join(BASE_DIR, "imputer.pkl"))
+except Exception as e:
+    print("❌ Model loading error:", e)
 
 FEATURES = [
     'age','bp','sg','al','su','rbc','pc','pcc','ba','bgr','bu','sc',
@@ -24,12 +29,11 @@ def index():
             values = []
             for feature in FEATURES:
                 val = request.form.get(feature)
-                if val == "" or val is None:
-                    val = 0   # ✅ safe default
+                if val is None or val.strip() == "":
+                    val = 0
                 values.append(float(val))
 
             data = np.array(values).reshape(1, -1)
-
             data = imputer.transform(data)
             data = scaler.transform(data)
 
@@ -38,7 +42,7 @@ def index():
             prediction = "🩺 CKD Detected" if result == 1 else "✅ No CKD Detected"
 
         except Exception as e:
-            prediction = f"Error: {str(e)}"
+            prediction = "Prediction failed. Please check inputs."
 
     return render_template("index.html", prediction=prediction)
 
