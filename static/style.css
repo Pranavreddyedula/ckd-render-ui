@@ -13,8 +13,8 @@ body {
 }
 
 h1 {
-    color: #0056b3;
     text-align: center;
+    color: #0056b3;
 }
 
 label {
@@ -41,4 +41,10 @@ button {
     width: 250px;
     display: block;
     margin: 15px auto;
+}
+
+.graph-img {
+    width: 95%;
+    margin: 10px auto;
+    display: block;
 }
