@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Load trained components safely
+# Load trained components
 model = joblib.load(os.path.join(BASE_DIR, "ckd_model.pkl"))
 scaler = joblib.load(os.path.join(BASE_DIR, "scaler.pkl"))
 imputer = joblib.load(os.path.join(BASE_DIR, "imputer.pkl"))
@@ -20,6 +20,7 @@ FEATURES = [
 @app.route("/", methods=["GET", "POST"])
 def index():
     prediction = None
+    image = None
 
     if request.method == "POST":
         try:
@@ -36,12 +37,22 @@ def index():
 
             result = model.predict(data)[0]
 
-            prediction = "🩺 CKD Detected" if result == 1 else "✅ No CKD Detected"
+            if result == 1:
+                prediction = "🩺 CKD Detected"
+                image = "ckd_kidney.png"
+            else:
+                prediction = "✅ No CKD Detected"
+                image = "healthy_kidney.png"
 
-        except Exception:
+        except Exception as e:
             prediction = "❌ Invalid input values"
+            image = None
 
-    return render_template("index.html", prediction=prediction)
+    return render_template(
+        "index.html",
+        prediction=prediction,
+        image=image
+    )
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
