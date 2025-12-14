@@ -2,20 +2,20 @@
 <html>
 <head>
     <title>CKD Detection</title>
-    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="container">
-    <h1>🩺 Chronic Kidney Disease Detection</h1>
-    <p>0 = No / Abnormal | 1 = Yes / Normal</p>
 
-    <form action="/predict" method="post">
-        {% for f in features %}
-            <label>{{ f }}</label>
-            <input type="number" step="any" name="{{ f }}" required>
-        {% endfor %}
-        <button type="submit">Predict</button>
-    </form>
-</div>
+<h2>🩺 Chronic Kidney Disease Detection</h2>
+<p>0 = No / Abnormal | 1 = Yes / Normal</p>
+
+<form method="POST">
+    {% for f in features %}
+        <label>{{ f }}</label><br>
+        <input type="number" step="any" name="{{ f }}" required>
+        <br><br>
+    {% endfor %}
+    <button type="submit">Predict</button>
+</form>
+
 </body>
 </html>
